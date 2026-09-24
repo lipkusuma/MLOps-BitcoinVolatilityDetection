@@ -12,12 +12,14 @@ import pandas as pd
 
 def fetch_bitcoin_data() -> pd.DataFrame | None:
     """
-    Menarik data pergerakan harga dan volume Bitcoin 24 jam terakhir dari CoinGecko API.
+    Menarik data pergerakan harga dan volume Bitcoin 7 hari terakhir dari CoinGecko API
+    untuk memastikan volume data mencukupi (>= 500 baris).
     
     Returns:
         pd.DataFrame | None: DataFrame data mentah atau None jika terjadi kegagalan API.
     """
-    url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1"
+    # Mengubah days=1 menjadi days=7 agar data yang didapat > 500 baris
+    url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     print("🔄 Mengirim permintaan HTTP GET ke CoinGecko REST API...")
@@ -76,14 +78,14 @@ def fetch_bitcoin_data() -> pd.DataFrame | None:
     print("\n" + "═" * 78)
     print("     🚀 DATA INGESTION SUCCESSFUL: BITCOIN PRICE & VOLUME MONITOR")
     print("═" * 78)
-    print(f" Status API  : 200 OK")
-    print(f" Total Rows  : {len(df)} records")
+    print(f" Status API   : 200 OK")
+    print(f" Total Rows   : {len(df)} records")
     print(f" Saved Archive: {archive_path}")
     print(f" Updated File : {latest_path}")
     print("─" * 78)
     print(" SAMPLE DATA (HEAD 5):")
     print("┌─────────────┬───────────────────────────┬──────────────────┬─────────────────────┐")
-    print("│ Waktu (UTC) │        Waktu (WIB)        │  Harga BTC (USD) │ 24h Volume (USD)    │")
+    print("│ Waktu (UTC) │         Waktu (WIB)       │   Harga BTC (USD) │ 24h Volume (USD)    │")
     print("├─────────────┼───────────────────────────┼──────────────────┼─────────────────────┤")
 
     for _, row in df_display.head(5).iterrows():
