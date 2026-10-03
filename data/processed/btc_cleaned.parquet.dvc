@@ -1,0 +1,5 @@
+outs:
+- md5: 7b833ae39a951bcf377ae42e38709cdf
+  size: 50527
+  hash: md5
+  path: btc_cleaned.parquet
