@@ -1,5 +1,5 @@
 outs:
-- md5: 6b8b0a066a450988129346ae7951fe7e
-  size: 40588
+- md5: 9555fed31f4b9de9e1a276f8c85e89de
+  size: 40610
   hash: md5
   path: btc_raw_latest.csv
