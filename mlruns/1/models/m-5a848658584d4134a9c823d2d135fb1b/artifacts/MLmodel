@@ -1,0 +1,38 @@
+artifact_path: /workspaces/MLOps-BitcoinVolatilityDetection/mlruns/1/models/m-5a848658584d4134a9c823d2d135fb1b/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.14.2
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.1
+    skops_trusted_types:
+    - sklearn.tree._tree.Tree
+is_signature_from_type_hint: false
+mlflow_version: 3.16.1
+model_id: m-5a848658584d4134a9c823d2d135fb1b
+model_size_bytes: 1848074
+model_uuid: m-5a848658584d4134a9c823d2d135fb1b
+prompts: null
+run_id: 88537df6399c491186f763a0ae81a91f
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "price", "required": true}, {"type": "double",
+    "name": "volume", "required": true}, {"type": "double", "name": "price_change_pct",
+    "required": true}, {"type": "double", "name": "volume_change_pct", "required":
+    true}]'
+  outputs: '[{"type": "long", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-10-18 03:22:49.114777'
