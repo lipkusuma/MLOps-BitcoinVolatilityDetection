@@ -5,15 +5,15 @@
 [![Codespaces](https://img.shields.io/badge/GitHub-Codespaces-brightgreen.svg)](https://github.com/codespaces)
 
 ## 📌 Deskripsi Proyek
-Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi volatilitas harga Bitcoin secara real-time. Sistem ini mencakup otomatisasi ingesti data dari REST API, pembersihan data, data versioning menggunakan DVC, serta otomatisasi CI/CD menggunakan GitHub Actions.
+Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi volatilitas harga Bitcoin secara real-time. Sistem ini mencakup otomatisasi ingesti data dari REST API, pembersihan data, data versioning menggunakan DVC, pelacakan eksperimen ML menggunakan MLflow, serta otomatisasi CI/CD menggunakan GitHub Actions.
 
 ---
 
 ## 👤 Identitas Mahasiswa
-* **Nama:** Alif Kusuma Fauzan
-* **NIM:** 245150201111051
-* **Program Studi:** Teknik Informatika
-* **Fakultas:** Ilmu Komputer, Universitas Brawijaya
+- **Nama:** Alif Kusuma Fauzan
+- **NIM:** 245150201111051
+- **Program Studi:** Teknik Informatika
+- **Fakultas:** Ilmu Komputer, Universitas Brawijaya
 
 ---
 
@@ -26,7 +26,7 @@ Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi
 | **LK-03** | Siklus Hidup ML | Konsep pengumpulan data, preprocessing, dan strategi retraining | ✅ Selesai | [`docs/LK03_Preprocessing_Pipeline.md`](./docs/LK03_Preprocessing_Pipeline.md) |
 | **LK-04** | Teknik Data Acquisition | Ingestion/scraping REST API CoinGecko via GitHub Actions | ✅ Selesai | [`docs/LK04_Automated_Ingestion.md`](./docs/LK04_Automated_Ingestion.md) |
 | **LK-05** | Manajemen Versi | Konsep Data Lineage & integrasi DVC (Tracking v1.0 & v2.0) | ✅ Selesai | [`docs/LK05_DVC_Data_Versioning.md`](./docs/LK05_DVC_Data_Versioning.md) |
-| **LK-06** | Eksperimentasi ML | Tracking eksperimen, metrik evaluasi, dan reproduksibilitas | ⏳ Mendatang | `docs/LK06_Eksperimentasi_ML.md` |
+| **LK-06** | Eksperimentasi ML | Tracking eksperimen, metrik evaluasi, dan reproduksibilitas | ✅ Selesai | [`docs/LK06_Eksperimentasi_ML.md`](./docs/LK06_Eksperimentasi_ML.md) |
 | **LK-07** | Containerization dengan Docker | Kontainerisasi skrip & lingkungan eksekusi pipeline ML | ⏳ Mendatang | `docs/LK07_Containerization_Docker.md` |
 | **LK-08** | Pendalaman Konsep CI/CD | Pipeline automation dan integrasi otomatis | ⏳ Mendatang | `docs/LK08_Pipeline_Automation.md` |
 | **LK-09** | Orkestrasi Layanan ML | Orkestrasi layanan Machine Learning terintegrasi | ⏳ Mendatang | `docs/LK09_Orkestrasi_Layanan_ML.md` |
@@ -57,18 +57,22 @@ MLOps-BitcoinVolatilityDetection/
 │   ├── LK02_Data_Exploration.md
 │   ├── LK03_Preprocessing_Pipeline.md
 │   ├── LK04_Automated_Ingestion.md
-│   └── LK05_DVC_Data_Versioning.md
+│   ├── LK05_DVC_Data_Versioning.md
+│   └── LK06_Eksperimentasi_ML.md  # Dokumentasi eksperimen MLflow & Model Metadata
+├── mlruns/                        # MLflow local tracking store directory
 ├── models/                        # Artefak model terpercaya / terlatih
 ├── notebooks/                     # Jupyter Notebooks untuk EDA & eksperimen awal
 ├── src/                           # Source code modular produksi
 │   ├── ingest_data.py             # Skrip penarikan data dinamis (CoinGecko REST API)
 │   ├── preprocess.py              # Skrip prapemrosesan & feature engineering
+│   ├── train.py                   # Skrip pelatihan model terintegrasi MLflow Tracking API
 │   └── utils/                     # Fungsi pembantu & utility
 ├── .gitignore                     # Pengabaian file lokal oleh Git
 ├── LICENSE                        # Lisensi proyek (MIT)
 ├── README.md                      # Dokumentasi utama proyek
 └── requirements.txt               # Daftar dependensi library Python
 ```
+
 ---
 
 ## 🛠️ Perkakas & Teknologi
@@ -79,6 +83,6 @@ MLOps-BitcoinVolatilityDetection/
 | **Data Ingestion** | CoinGecko API, `requests` | Penarikan data harga & volatilitas Bitcoin |
 | **Data Processing** | Pandas, PyArrow | Pembersihan data & format Parquet |
 | **Data Versioning** | DVC (Data Version Control) | Melacak versi dataset tanpa beban di Git |
+| **Experiment Tracking** | MLflow Tracking API | Pelacakan parameter, metrik, artefak, & model |
+| **Machine Learning** | Scikit-Learn | Algoritma Random Forest Classifier |
 | **CI/CD Automation** | GitHub Actions | Penarikan data otomatis & pembuatan Artifacts |
-
----
