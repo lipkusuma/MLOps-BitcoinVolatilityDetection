@@ -96,7 +96,9 @@ Metrics (Test Set N=142):
   roc_auc: 0.8414855
 
 Artifacts:
-  Model Artifact Path: mlruns/1/1acf96d32dd44553b216fe4301504f94/artifacts/model
+  Model Artifact Path: mlruns/1/models/m-9099abb51028425ebef7f3f4634748d8/artifacts
+  Model File: mlruns/1/models/m-9099abb51028425ebef7f3f4634748d8/artifacts/model.skops
+  Metadata Summary: models/metadata/model_metadata.json
   Confusion Matrix Plot: confusion_matrix.png
 
 Tags Metadata:
@@ -106,6 +108,8 @@ Tags Metadata:
   dataset_version: v2.0_DVC
   task: Binary Classification
 ```
+
+Ringkasan metadata dalam format JSON tersedia di [`models/metadata/model_metadata.json`](../models/metadata/model_metadata.json). Model ini tercatat sebagai logged model di MLflow dan belum didaftarkan ke Model Registry.
 
 ---
 

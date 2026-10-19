@@ -60,7 +60,9 @@ MLOps-BitcoinVolatilityDetection/
 │   ├── LK05_DVC_Data_Versioning.md
 │   └── LK06_Eksperimentasi_ML.md  # Dokumentasi eksperimen MLflow & Model Metadata
 ├── mlruns/                        # MLflow local tracking store directory
-├── models/                        # Artefak model terpercaya / terlatih
+├── models/                        # Artefak model & metadata deployment
+│   └── metadata/
+│       └── model_metadata.json    # Ringkasan metadata model terbaik LK-06
 ├── notebooks/                     # Jupyter Notebooks untuk EDA & eksperimen awal
 ├── src/                           # Source code modular produksi
 │   ├── ingest_data.py             # Skrip penarikan data dinamis (CoinGecko REST API)
