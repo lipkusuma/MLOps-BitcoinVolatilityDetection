@@ -1,0 +1,74 @@
+{
+  "name": "BitcoinVolatilityRandomForest",
+  "version": "1",
+  "task": "Binary Classification",
+  "model_family": "Random Forest Classifier",
+  "selection": {
+    "run_name": "rf_optimal_v3",
+    "criterion": "Selected in LK06 for its F1-score and recall; tied with rf_deep_overfit_v4 on F1-score, recall, precision, and accuracy, with a slightly higher ROC-AUC and simpler hyperparameters"
+  },
+  "experiment": {
+    "name": "Bitcoin_Volatility_Detection",
+    "id": "1"
+  },
+  "run_id": "1acf96d32dd44553b216fe4301504f94",
+  "model_id": "m-9099abb51028425ebef7f3f4634748d8",
+  "model_uri": "models:/m-9099abb51028425ebef7f3f4634748d8",
+  "parameters": {
+    "n_estimators": 200,
+    "max_depth": 10,
+    "min_samples_split": 5,
+    "random_state": 42
+  },
+  "selection_metrics": {
+    "accuracy": 0.9929577464788732,
+    "precision": 1.0,
+    "recall": 0.75,
+    "f1_score": 0.8571428571428571,
+    "roc_auc": 0.8414855072463767
+  },
+  "evaluation": {
+    "split": "test",
+    "samples": 142,
+    "confusion_matrix": {
+      "true_normal": 138,
+      "false_positive": 0,
+      "false_negative": 1,
+      "true_anomaly": 3
+    }
+  },
+  "training_data": {
+    "path": "data/processed/btc_cleaned.parquet",
+    "dataset_version": "v2.0_DVC",
+    "train_samples": 565,
+    "test_samples": 142,
+    "num_features": 4
+  },
+  "feature_contract": {
+    "feature_names": [
+      "price",
+      "volume",
+      "price_change_pct",
+      "volume_change_pct"
+    ],
+    "feature_dtype": "float64",
+    "output": "Binary anomaly prediction"
+  },
+  "artifacts": {
+    "model_path": "mlruns/1/models/m-9099abb51028425ebef7f3f4634748d8/artifacts",
+    "model_file": "mlruns/1/models/m-9099abb51028425ebef7f3f4634748d8/artifacts/model.skops",
+    "mlflow_model_metadata": "mlruns/1/models/m-9099abb51028425ebef7f3f4634748d8/artifacts/MLmodel",
+    "confusion_matrix": "mlruns/1/1acf96d32dd44553b216fe4301504f94/artifacts/confusion_matrix.png"
+  },
+  "registry": {
+    "registered": false,
+    "note": "This model is logged in MLflow but is not registered under a named model version."
+  },
+  "tags": {
+    "author": "Alif Kusuma Fauzan",
+    "nim": "245150201111051",
+    "model_family": "Random Forest",
+    "dataset_version": "v2.0_DVC",
+    "task": "Binary Classification"
+  }
+}
