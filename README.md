@@ -27,7 +27,7 @@ Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi
 | **LK-04** | Teknik Data Acquisition | Ingestion/scraping REST API CoinGecko via GitHub Actions | ✅ Selesai | [`docs/LK04_Automated_Ingestion.md`](./docs/LK04_Automated_Ingestion.md) |
 | **LK-05** | Manajemen Versi | Konsep Data Lineage & integrasi DVC (Tracking v1.0 & v2.0) | ✅ Selesai | [`docs/LK05_DVC_Data_Versioning.md`](./docs/LK05_DVC_Data_Versioning.md) |
 | **LK-06** | Eksperimentasi ML | Tracking eksperimen, metrik evaluasi, dan reproduksibilitas | ✅ Selesai | [`docs/LK06_Eksperimentasi_ML.md`](./docs/LK06_Eksperimentasi_ML.md) |
-| **LK-07** | Containerization dengan Docker | Kontainerisasi skrip & lingkungan eksekusi pipeline ML | ⏳ Mendatang | `docs/LK07_Containerization_Docker.md` |
+| **LK-07** | Containerization dengan Docker | Model Registry, Versioning v1-v4, Stage Transition, & Docker Serving | ✅ Selesai | [`docs/LK07_Containerization_Docker.md`](./docs/LK07_Containerization_Docker.md) |
 | **LK-08** | Pendalaman Konsep CI/CD | Pipeline automation dan integrasi otomatis | ⏳ Mendatang | `docs/LK08_Pipeline_Automation.md` |
 | **LK-09** | Orkestrasi Layanan ML | Orkestrasi layanan Machine Learning terintegrasi | ⏳ Mendatang | `docs/LK09_Orkestrasi_Layanan_ML.md` |
 | **LK-10** | Serving & Scaling | Serving & scaling sistem Machine Learning di produksi | ⏳ Mendatang | `docs/LK10_Serving_Scaling.md` |

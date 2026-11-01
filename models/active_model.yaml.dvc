@@ -1,0 +1,5 @@
+outs:
+- md5: 7fff679e9783dd8e6626f6ca417f98ed
+  size: 582
+  hash: md5
+  path: active_model.yaml
