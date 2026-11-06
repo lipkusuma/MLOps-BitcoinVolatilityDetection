@@ -2,3 +2,5 @@
     remote = local_remote
 ['remote "local_remote"']
     url = ../../dvc_remote_storage
+['remote "origin"']
+    url = https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.dvc
