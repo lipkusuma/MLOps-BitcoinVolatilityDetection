@@ -39,18 +39,32 @@ def main():
     if f1_score >= THRESHOLD_F1:
         print(f"✅ Model LOLOS evaluasi threshold (F1 >= {THRESHOLD_F1})!")
         
-        # Langsung tentukan URI artefak model tanpa perlu mendownload artefak (mencegah hanging)
-        model_uri = f"runs:/{run_id}/random_forest_model"
-        print(f"📦 Mengintegrasikan Model URI ke Registry: {model_uri}")
+        # Urutan kandidat path URI (Root /, random_forest_model, model)
+        candidate_uris = [
+            f"runs:/{run_id}/",
+            f"runs:/{run_id}/random_forest_model",
+            f"runs:/{run_id}/model"
+        ]
         
-        try:
-            registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
-            version = registered_model.version
-        except Exception as e:
-            print(f"⚠️ Fallback registrasi path: {e}")
-            model_uri = f"runs:/{run_id}/model"
-            registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
-            version = registered_model.version
+        registered_model = None
+        used_uri = None
+
+        for uri in candidate_uris:
+            try:
+                print(f"📦 Mencoba registrasi dari URI: {uri}")
+                registered_model = mlflow.register_model(model_uri=uri, name=MODEL_NAME)
+                used_uri = uri
+                print(f"✅ Berhasil mendaftarkan model dari: {used_uri}")
+                break
+            except Exception as e:
+                print(f"⚠️ Gagal pada URI {uri}: {e}")
+                continue
+
+        if not registered_model:
+            print("❌ Gagal mendaftarkan model dari seluruh kandidat URI!")
+            sys.exit(1)
+
+        version = registered_model.version
         
         # Transisi Stage ke STAGING
         client.transition_model_version_stage(
