@@ -3,12 +3,10 @@ import sys
 import mlflow
 from mlflow.tracking import MlflowClient
 
-# Threshold evaluasi performa model (LK-01)
 THRESHOLD_F1 = 0.75
 MODEL_NAME = "BitcoinVolatilityDetector"
 
 def main():
-    # Ambil tracking URI dari environment variable (DagsHub Server)
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
     if not tracking_uri:
         print("❌ MLFLOW_TRACKING_URI belum diatur!")
@@ -17,13 +15,11 @@ def main():
     mlflow.set_tracking_uri(tracking_uri)
     client = MlflowClient()
 
-    # Cari eksperimen aktif
     experiment = mlflow.get_experiment_by_name("Bitcoin_Volatility_Detection")
     if not experiment:
         print("❌ Eksperimen 'Bitcoin_Volatility_Detection' tidak ditemukan di MLflow!")
         sys.exit(1)
 
-    # Ambil run pelatihan terbaru
     runs = client.search_runs(
         experiment_ids=[experiment.experiment_id],
         order_by=["attribute.start_time DESC"],
@@ -40,15 +36,26 @@ def main():
     print(f"📊 MLflow Run ID Terbaru : {run_id}")
     print(f"🎯 Metrik F1-Score       : {f1_score:.4f} (Threshold minimal: {THRESHOLD_F1})")
 
-    # Logika Validasi Otomatis (Tahap 3 & 4)
     if f1_score >= THRESHOLD_F1:
         print(f"✅ Model LOLOS evaluasi threshold (F1 >= {THRESHOLD_F1})!")
         
-        # Register Model ke MLflow Registry
-        model_uri = f"runs:/{run_id}/model"
+        # Deteksi nama folder artifact model secara otomatis
+        artifacts = client.list_artifacts(run_id)
+        model_artifact_path = None
+        
+        for art in artifacts:
+            if art.is_dir:
+                model_artifact_path = art.path
+                break
+        
+        if not model_artifact_path:
+            model_artifact_path = "model"
+
+        model_uri = f"runs:/{run_id}/{model_artifact_path}"
+        print(f"📦 Menggunakan Model URI : {model_uri}")
+        
         registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
         
-        # Transisi Lifecycle Stage ke STAGING
         client.transition_model_version_stage(
             name=MODEL_NAME,
             version=registered_model.version,
