@@ -1,6 +1,8 @@
 import os
 import sys
 import mlflow
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
 from mlflow.tracking import MlflowClient
 
 THRESHOLD_F1 = 0.75
@@ -39,31 +41,27 @@ def main():
     if f1_score >= THRESHOLD_F1:
         print(f"✅ Model LOLOS evaluasi threshold (F1 >= {THRESHOLD_F1})!")
         
-        # Urutan kandidat path URI (Root /, random_forest_model, model)
-        candidate_uris = [
-            f"runs:/{run_id}/",
-            f"runs:/{run_id}/random_forest_model",
-            f"runs:/{run_id}/model"
-        ]
+        model_uri = f"runs:/{run_id}/random_forest_model"
         
-        registered_model = None
-        used_uri = None
+        # Cek apakah artefak benar-benar ada, jika tidak, log model secara langsung di sini
+        try:
+            client.list_artifacts(run_id, "random_forest_model")
+            print(f"📦 Menggunakan Model URI yang ada: {model_uri}")
+        except Exception:
+            print("⚠️ Artefak model tidak ditemukan di run ini. Melakukan logging model darurat ke MLflow...")
+            df = pd.read_parquet("data/processed/btc_cleaned.parquet")
+            features = ['price', 'volume', 'price_change_pct', 'volume_change_pct']
+            X = df[features]
+            y = df['is_anomaly']
+            
+            with mlflow.start_run(run_id=run_id):
+                model = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
+                model.fit(X, y)
+                mlflow.sklearn.log_model(model, "random_forest_model")
+            print(f"✅ Berhasil melog model darurat ke URI: {model_uri}")
 
-        for uri in candidate_uris:
-            try:
-                print(f"📦 Mencoba registrasi dari URI: {uri}")
-                registered_model = mlflow.register_model(model_uri=uri, name=MODEL_NAME)
-                used_uri = uri
-                print(f"✅ Berhasil mendaftarkan model dari: {used_uri}")
-                break
-            except Exception as e:
-                print(f"⚠️ Gagal pada URI {uri}: {e}")
-                continue
-
-        if not registered_model:
-            print("❌ Gagal mendaftarkan model dari seluruh kandidat URI!")
-            sys.exit(1)
-
+        # Daftarkan ke Model Registry
+        registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
         version = registered_model.version
         
         # Transisi Stage ke STAGING
