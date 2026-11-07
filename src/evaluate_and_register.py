@@ -1,8 +1,10 @@
 import os
 import sys
+
+# Kunci timeout request HTTP maksimal 30 detik agar tidak pernah hanging di DagsHub
+os.environ["MLFLOW_HTTP_REQUEST_TIMEOUT"] = "30"
+
 import mlflow
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
 from mlflow.tracking import MlflowClient
 
 THRESHOLD_F1 = 0.75
@@ -41,33 +43,35 @@ def main():
     if f1_score >= THRESHOLD_F1:
         print(f"✅ Model LOLOS evaluasi threshold (F1 >= {THRESHOLD_F1})!")
         
-        model_uri = f"runs:/{run_id}/random_forest_model"
-        registered_model = None
-        
-        # Coba daftarkan model secara langsung
+        # Buat Registered Model container jika belum ada
         try:
-            registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
-            print(f"📦 Berhasil mendaftarkan model dari URI: {model_uri}")
-        except Exception as e:
-            print(f"⚠️ Artefak model belum ada di MLflow ({e}). Mengunggah artefak model ke DagsHub...")
-            
-            # Melatih & mengunggah artefak model ke run_id
-            df = pd.read_parquet("data/processed/btc_cleaned.parquet")
-            features = ['price', 'volume', 'price_change_pct', 'volume_change_pct']
-            X = df[features]
-            y = df['is_anomaly']
-            
-            with mlflow.start_run(run_id=run_id):
-                model = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
-                model.fit(X, y)
-                mlflow.sklearn.log_model(model, "random_forest_model")
-            
-            # Registrasi ulang setelah model berhasil diunggah
-            registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
-            print(f"✅ Berhasil mendaftarkan model ke MLflow Registry!")
+            client.create_registered_model(MODEL_NAME)
+            print(f"✨ Registered Model '{MODEL_NAME}' berhasil disiapkan.")
+        except Exception:
+            print(f"ℹ️ Registered Model '{MODEL_NAME}' sudah tersedia.")
 
-        version = registered_model.version
-        
+        # Daftarkan versi model langsung via REST API Client (instan tanpa download/inspect)
+        model_source = f"runs:/{run_id}/random_forest_model"
+        try:
+            mv = client.create_model_version(
+                name=MODEL_NAME,
+                source=model_source,
+                run_id=run_id,
+                description=f"Auto-staged by GitHub Actions CI/CD (F1={f1_score:.4f})"
+            )
+            version = mv.version
+        except Exception as e:
+            print(f"⚠️ Registrasi path fallback: {e}")
+            mv = client.create_model_version(
+                name=MODEL_NAME,
+                source=f"runs:/{run_id}/model",
+                run_id=run_id,
+                description=f"Auto-staged by GitHub Actions CI/CD (F1={f1_score:.4f})"
+            )
+            version = mv.version
+
+        print(f"📦 Version {version} berhasil terdaftar di DagsHub Model Registry.")
+
         # Transisi Stage ke STAGING
         client.transition_model_version_stage(
             name=MODEL_NAME,
