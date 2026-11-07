@@ -42,13 +42,16 @@ def main():
         print(f"✅ Model LOLOS evaluasi threshold (F1 >= {THRESHOLD_F1})!")
         
         model_uri = f"runs:/{run_id}/random_forest_model"
+        registered_model = None
         
-        # Cek apakah artefak benar-benar ada, jika tidak, log model secara langsung di sini
+        # Coba daftarkan model secara langsung
         try:
-            client.list_artifacts(run_id, "random_forest_model")
-            print(f"📦 Menggunakan Model URI yang ada: {model_uri}")
-        except Exception:
-            print("⚠️ Artefak model tidak ditemukan di run ini. Melakukan logging model darurat ke MLflow...")
+            registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
+            print(f"📦 Berhasil mendaftarkan model dari URI: {model_uri}")
+        except Exception as e:
+            print(f"⚠️ Artefak model belum ada di MLflow ({e}). Mengunggah artefak model ke DagsHub...")
+            
+            # Melatih & mengunggah artefak model ke run_id
             df = pd.read_parquet("data/processed/btc_cleaned.parquet")
             features = ['price', 'volume', 'price_change_pct', 'volume_change_pct']
             X = df[features]
@@ -58,10 +61,11 @@ def main():
                 model = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
                 model.fit(X, y)
                 mlflow.sklearn.log_model(model, "random_forest_model")
-            print(f"✅ Berhasil melog model darurat ke URI: {model_uri}")
+            
+            # Registrasi ulang setelah model berhasil diunggah
+            registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
+            print(f"✅ Berhasil mendaftarkan model ke MLflow Registry!")
 
-        # Daftarkan ke Model Registry
-        registered_model = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
         version = registered_model.version
         
         # Transisi Stage ke STAGING
