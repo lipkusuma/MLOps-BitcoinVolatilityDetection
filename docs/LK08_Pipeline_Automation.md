@@ -63,7 +63,7 @@ pytest tests/ -v
 ### B. Verifikasi Evaluasi & Auto-Staging Script (Manual Run Check)
 Eksekusi langsung skrip evaluasi dengan mengarahkan variabel lingkungan ke server DagsHub:
 ```bash
-export MLFLOW_TRACKING_URI="[https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow](https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow)"
+export MLFLOW_TRACKING_URI="https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow"
 export MLFLOW_TRACKING_USERNAME="lipkusuma"
 export MLFLOW_TRACKING_PASSWORD="<DAGSHUB_TOKEN>"
 
@@ -77,7 +77,7 @@ import os
 import mlflow
 from mlflow.tracking import MlflowClient
 
-mlflow.set_tracking_uri("[https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow](https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow)")
+mlflow.set_tracking_uri("https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow")
 client = MlflowClient()
 
 staging_versions = client.get_latest_versions("BitcoinVolatilityDetector", stages=["Staging"])
