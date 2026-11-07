@@ -1,0 +1,52 @@
+name: MLOps End-to-End Pipeline Automation (DagsHub Integrated)
+
+on:
+  push:
+    branches: [ main, feat/lk08-automation ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  mlops-pipeline:
+    runs-on: ubuntu-latest
+
+    env:
+      # Mengarahkan MLflow Tracking dan DVC ke Cloud DagsHub
+      MLFLOW_TRACKING_URI: "https://dagshub.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.mlflow"
+      MLFLOW_TRACKING_USERNAME: "${{ github.repository_owner }}"
+      MLFLOW_TRACKING_PASSWORD: "${{ secrets.DAGSHUB_TOKEN }}"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest dvc dagshub
+
+      - name: Pull Data Processed dari DagsHub DVC Remote
+        run: |
+          dvc remote add -f origin https://dagshub.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.dvc
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ github.repository_owner }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+          dvc pull -r origin
+
+      - name: 'Tahap 1: Automated Testing (Pytest)'
+        run: |
+          pytest tests/
+
+      - name: 'Tahap 2: Automated Training (train.py)'
+        run: |
+          python src/train.py --n_estimators 200 --max_depth 10
+
+      - name: 'Tahap 3 & 4: Model Evaluation & Auto-Staging Registry'
+        run: |
+          python src/evaluate_and_register.py
