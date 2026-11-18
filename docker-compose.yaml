@@ -1,0 +1,69 @@
+services:
+  mlflow-server:
+    image: bitcoin-mlops:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mlflow-tracking-server
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:////workspaces/MLOps-BitcoinVolatilityDetection/mlflow_store/mlflow.db
+      --default-artifact-root /workspaces/MLOps-BitcoinVolatilityDetection/mlruns
+      --host 0.0.0.0
+      --port 5000
+      --workers 1
+      --allowed-hosts "*"
+      --cors-allowed-origins "*"
+    environment:
+      - DAGSHUB_REPO_OWNER=lipkusuma
+      - DAGSHUB_REPO_NAME=MLOps-BitcoinVolatilityDetection
+      - DAGSHUB_TOKEN=${DAGSHUB_TOKEN:-}
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow-db-data:/workspaces/MLOps-BitcoinVolatilityDetection/mlflow_store
+      - mlflow-artifacts-data:/workspaces/MLOps-BitcoinVolatilityDetection/mlruns
+    networks:
+      - mlops-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  api-service:
+    image: bitcoin-mlops:latest
+    container_name: bitcoin-volatility-api
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+      - MLFLOW_HTTP_REQUEST_TIMEOUT=5
+      - MLFLOW_HTTP_REQUEST_MAX_RETRIES=1
+      - DAGSHUB_MLFLOW_URI=https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow
+      - DAGSHUB_REPO_OWNER=lipkusuma
+      - DAGSHUB_REPO_NAME=MLOps-BitcoinVolatilityDetection
+      - DAGSHUB_TOKEN=${DAGSHUB_TOKEN:-}
+      - MODEL_NAME=BitcoinVolatilityDetector
+      - STAGE=Production
+      - DAGSHUB_STAGE=Staging
+    ports:
+      - "8000:5000"
+    volumes:
+      - mlflow-artifacts-data:/workspaces/MLOps-BitcoinVolatilityDetection/mlruns
+    depends_on:
+      mlflow-server:
+        condition: service_healthy
+    networks:
+      - mlops-network
+    restart: unless-stopped
+
+networks:
+  mlops-network:
+    driver: bridge
+
+volumes:
+  mlflow-db-data:
+    driver: local
+  mlflow-artifacts-data:
+    driver: local
