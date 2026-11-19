@@ -5,7 +5,7 @@
 [![Codespaces](https://img.shields.io/badge/GitHub-Codespaces-brightgreen.svg)](https://github.com/codespaces)
 
 ## 📌 Deskripsi Proyek
-Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi volatilitas harga Bitcoin secara real-time. Sistem ini mencakup otomatisasi ingesti data dari REST API, pembersihan data, data versioning menggunakan DVC, pelacakan eksperimen ML dan model registry menggunakan MLflow & DagsHub Cloud, containerization REST API dengan Docker, serta otomatisasi CI/CD terintegrasi ("Code as a Trigger") menggunakan GitHub Actions.
+Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi volatilitas harga Bitcoin secara real-time. Sistem ini mencakup otomatisasi ingesti data dari REST API, pembersihan data, data versioning menggunakan DVC, pelacakan eksperimen ML dan model registry menggunakan MLflow & DagsHub Cloud, containerization REST API dengan Docker, otomatisasi CI/CD terintegrasi ("Code as a Trigger") menggunakan GitHub Actions, serta orkestrasi layanan multi-kontainer menggunakan Docker Compose.
 
 ---
 
@@ -29,7 +29,7 @@ Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi
 | **LK-06** | Eksperimentasi ML | Tracking eksperimen, metrik evaluasi, dan reproduksibilitas | ✅ Selesai | [`docs/LK06_Eksperimentasi_ML.md`](./docs/LK06_Eksperimentasi_ML.md) |
 | **LK-07** | Containerization dengan Docker | Model Registry, Versioning v1-v4, Stage Transition, & Docker Serving | ✅ Selesai | [`docs/LK07_Containerization_Docker.md`](./docs/LK07_Containerization_Docker.md) |
 | **LK-08** | Pendalaman Konsep CI/CD | Pipeline automation, Pytest, DagsHub remote, & Auto-Staging | ✅ Selesai | [`docs/LK08_Pipeline_Automation.md`](./docs/LK08_Pipeline_Automation.md) |
-| **LK-09** | Orkestrasi Layanan ML | Orkestrasi layanan Machine Learning terintegrasi | ⏳ Mendatang | `docs/LK09_Orkestrasi_Layanan_ML.md` |
+| **LK-09** | Orkestrasi Layanan ML | Orkestrasi layanan Machine Learning terintegrasi (Docker Compose) | ✅ Selesai | [`docs/LK09_Orkestrasi_Layanan_ML.md`](./docs/LK09_Orkestrasi_Layanan_ML.md) |
 | **LK-10** | Serving & Scaling | Serving & scaling sistem Machine Learning di produksi | ⏳ Mendatang | `docs/LK10_Serving_Scaling.md` |
 | **LK-11** | Observability | Teknik monitoring performa model & data drift | ⏳ Mendatang | `docs/LK11_Observability_Monitoring.md` |
 | **LK-12** | Model Maintenance | Pemeliharaan, kaji ulang, dan pembaruan model berlanjut | ⏳ Mendatang | `docs/LK12_Model_Maintenance.md` |
@@ -61,7 +61,8 @@ MLOps-BitcoinVolatilityDetection/
 │   ├── LK05_DVC_Data_Versioning.md
 │   ├── LK06_Eksperimentasi_ML.md
 │   ├── LK07_Containerization_Docker.md
-│   └── LK08_Pipeline_Automation.md 
+│   ├── LK08_Pipeline_Automation.md
+│   └── LK09_Orkestrasi_Layanan_ML.md
 ├── mlruns/                         # MLflow local tracking store directory
 ├── models/                         # Artefak model & metadata deployment
 │   ├── metadata/
@@ -79,6 +80,7 @@ MLOps-BitcoinVolatilityDetection/
 │   └── test_pipeline.py            # Pytest integrity & Data Leakage test
 ├── .gitignore                      # Pengabaian file lokal oleh Git
 ├── app.py                          # Flask REST API Inference Server (Port 5000)
+├── docker-compose.yaml             # Manifest Orkestrasi Multi-Layanan (LK-09)
 ├── Dockerfile                      # Blueprint Containerization (Python 3.10-slim)
 ├── LICENSE                         # Lisensi proyek (MIT)
 ├── README.md                       # Dokumentasi utama repositori proyek
@@ -99,4 +101,5 @@ MLOps-BitcoinVolatilityDetection/
 | **Automated Testing** | Pytest | Pengujian integritas skema data & Data Leakage |
 | **Machine Learning** | Scikit-Learn | Algoritma Random Forest Classifier |
 | **Containerization** | Docker | Packaging Flask REST API ke dalam kontainer |
+| **Orchestration** | Docker Compose | Orkestrasi multi-layanan (`mlflow-server` & `api-service`) |
 | **CI/CD Automation** | GitHub Actions | Eksekusi otomatisasi pipeline ("Code as a Trigger") |
