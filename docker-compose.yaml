@@ -1,9 +1,6 @@
 services:
   mlflow-server:
     image: bitcoin-mlops:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: mlflow-tracking-server
     command: >
       mlflow server
@@ -34,28 +31,35 @@ services:
     restart: unless-stopped
 
   api-service:
-    image: bitcoin-mlops:latest
-    container_name: bitcoin-volatility-api
-    environment:
-      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
-      - MLFLOW_HTTP_REQUEST_TIMEOUT=5
-      - MLFLOW_HTTP_REQUEST_MAX_RETRIES=1
-      - DAGSHUB_MLFLOW_URI=https://dagshub.com/lipkusuma/MLOps-BitcoinVolatilityDetection.mlflow
-      - DAGSHUB_REPO_OWNER=lipkusuma
-      - DAGSHUB_REPO_NAME=MLOps-BitcoinVolatilityDetection
-      - DAGSHUB_TOKEN=${DAGSHUB_TOKEN:-}
-      - MODEL_NAME=BitcoinVolatilityDetector
-      - STAGE=Production
-      - DAGSHUB_STAGE=Staging
+    image: bitcoin-volatility-mlflow-serve:latest
     ports:
-      - "8000:5000"
-    volumes:
-      - mlflow-artifacts-data:/workspaces/MLOps-BitcoinVolatilityDetection/mlruns
+      - "8081-8083:8080"
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       mlflow-server:
         condition: service_healthy
     networks:
       - mlops-network
+
+  nginx-lb:
+    image: nginx:alpine
+    container_name: bitcoin-volatility-lb
+    network_mode: "host"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      api-service:
+        condition: service_healthy
     restart: unless-stopped
 
 networks:
