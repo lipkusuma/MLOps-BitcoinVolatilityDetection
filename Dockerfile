@@ -1,18 +1,9 @@
-FROM python:3.10-slim
+FROM bitcoin-mlops:latest
 
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /workspaces/MLOps-BitcoinVolatilityDetection
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir prometheus-client
 
 COPY app.py .
-COPY models/ ./models/
-COPY mlruns/ ./mlruns/
-RUN mkdir -p ./mlflow_store
-COPY mlflow.db* ./mlflow_store/
 
-EXPOSE 5000
+EXPOSE 8080
 
 CMD ["python", "app.py"]
