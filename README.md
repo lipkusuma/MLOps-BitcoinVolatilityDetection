@@ -5,7 +5,7 @@
 [![Codespaces](https://img.shields.io/badge/GitHub-Codespaces-brightgreen.svg)](https://github.com/codespaces)
 
 ## 📌 Deskripsi Proyek
-Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi volatilitas harga Bitcoin secara real-time. Sistem ini mencakup otomatisasi ingesti data dari REST API, pembersihan data, data versioning menggunakan DVC, pelacakan eksperimen ML dan model registry menggunakan MLflow & DagsHub Cloud, containerization REST API dengan Docker, otomatisasi CI/CD terintegrasi ("Code as a Trigger") menggunakan GitHub Actions, orkestrasi layanan multi-kontainer menggunakan Docker Compose, serta model serving dan horizontal scaling menggunakan MLflow Models & Nginx.
+Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi volatilitas harga Bitcoin secara real-time. Sistem ini mencakup otomatisasi ingesti data dari REST API, pembersihan data, data versioning menggunakan DVC, pelacakan eksperimen ML dan model registry menggunakan MLflow & DagsHub Cloud, containerization REST API dengan Docker, otomatisasi CI/CD terintegrasi ("Code as a Trigger") menggunakan GitHub Actions, orkestrasi layanan multi-kontainer menggunakan Docker Compose, model serving dan horizontal scaling menggunakan MLflow Models & Nginx, serta observabilitas dan pemantauan performa model & drift secara real-time menggunakan Prometheus & Grafana.
 
 ---
 
@@ -31,7 +31,7 @@ Proyek MLOps ini membangun pipeline otomatisasi untuk mendeteksi dan memprediksi
 | **LK-08** | Pendalaman Konsep CI/CD | Pipeline automation, Pytest, DagsHub remote, & Auto-Staging | ✅ Selesai | [`docs/LK08_Pipeline_Automation.md`](./docs/LK08_Pipeline_Automation.md) |
 | **LK-09** | Orkestrasi Layanan ML | Orkestrasi layanan Machine Learning terintegrasi (Docker Compose) | ✅ Selesai | [`docs/LK09_Orkestrasi_Layanan_ML.md`](./docs/LK09_Orkestrasi_Layanan_ML.md) |
 | **LK-10** | Serving & Scaling | Serving & scaling sistem Machine Learning di produksi | ✅ Selesai | [`docs/LK10_Serving_Scaling.md`](./docs/LK10_Serving_Scaling.md) |
-| **LK-11** | Observability | Teknik monitoring performa model & data drift | ⏳ Mendatang | `docs/LK11_Observability_Monitoring.md` |
+| **LK-11** | Observability | Teknik monitoring performa model & data drift | ✅ Selesai | [`docs/LK11_Observability_Monitoring.md`](./docs/LK11_Observability_Monitoring.md) |
 | **LK-12** | Model Maintenance | Pemeliharaan, kaji ulang, dan pembaruan model berlanjut | ⏳ Mendatang | `docs/LK12_Model_Maintenance.md` |
 | **LK-13** | Etika AI dan Tata Kelola | Governance, transparansi, dan etika kecerdasan artifisial | ⏳ Mendatang | `docs/LK13_Etika_AI_Governance.md` |
 
@@ -63,7 +63,12 @@ MLOps-BitcoinVolatilityDetection/
 │   ├── LK07_Containerization_Docker.md
 │   ├── LK08_Pipeline_Automation.md
 │   ├── LK09_Orkestrasi_Layanan_ML.md
-│   └── LK10_Serving_Scaling.md
+│   ├── LK10_Serving_Scaling.md
+│   └── LK11_Observability_Monitoring.md
+├── grafana/
+│   └── provisioning/
+│       └── datasources/
+│           └── prometheus.yml      # Auto-provisioning datasource Prometheus ke Grafana (LK-11)
 ├── mlruns/                         # MLflow local tracking store directory
 ├── models/                         # Artefak model & metadata deployment
 │   ├── metadata/
@@ -80,11 +85,12 @@ MLOps-BitcoinVolatilityDetection/
 ├── tests/                          # Automated Unit Testing
 │   └── test_pipeline.py            # Pytest integrity & Data Leakage test
 ├── .gitignore                      # Pengabaian file lokal oleh Git
-├── app.py                          # Flask REST API Inference Server (Port 5000)
-├── docker-compose.yaml             # Manifest Orkestrasi Multi-Layanan & Scaling (LK-09 & LK-10)
-├── Dockerfile                      # Blueprint Containerization (Python 3.10-slim)
+├── app.py                          # Flask REST API Inference & Prometheus Metrics Server (LK-11)
+├── docker-compose.yaml             # Manifest Orkestrasi, Scaling, & Monitoring (LK-09 s.d. LK-11)
+├── Dockerfile                      # Blueprint Containerization API Terinstrumentasi (LK-11)
 ├── LICENSE                         # Lisensi proyek (MIT)
 ├── nginx.conf                      # Konfigurasi Load Balancer Nginx (LK-10)
+├── prometheus.yml                  # Konfigurasi Target Scraping Prometheus (LK-11)
 ├── README.md                       # Dokumentasi utama repositori proyek
 └── requirements.txt                # Daftar dependensi library Python
 ```
@@ -106,3 +112,4 @@ MLOps-BitcoinVolatilityDetection/
 | **Orchestration** | Docker Compose | Orkestrasi multi-layanan & replikasi (`mlflow-server`, `api-service`, `nginx-lb`) |
 | **Model Serving & Load Balancing** | MLflow Models, Nginx | Serving model Registry (`Production`) & distribusi trafik *round-robin* |
 | **CI/CD Automation** | GitHub Actions | Eksekusi otomatisasi pipeline ("Code as a Trigger") |
+| **Observability & Monitoring** | Prometheus, Grafana | Scraping metrik operasional, deteksi drift, & visualisasi dashboard |
